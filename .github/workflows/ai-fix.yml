@@ -1,27 +1,30 @@
-name: AI Fix GitHub Issues
+name: AI Fix Frontend Issues
 
 on:
   issues:
     types: [opened]
 
 jobs:
-  ai-fix:
+  fix-issue:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install anthropic langchain PyGithub
+        run: |
+          pip install anthropic PyGithub
 
-      - name: Run AI fix script
+      - name: Run AI agent
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python ai_agents/fix_issue.py
+        run: |
+          python ai_agents/fix_issue.py
